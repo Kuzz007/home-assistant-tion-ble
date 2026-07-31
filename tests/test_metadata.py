@@ -15,7 +15,7 @@ def test_manifest() -> None:
 
     assert manifest["domain"] == "tion_ble"
     assert manifest["config_flow"] is True
-    assert manifest["version"] == "0.1.0"
+    assert manifest["version"] == "0.1.1"
     assert manifest["bluetooth"][0]["service_uuid"].startswith("98f00001")
 
 

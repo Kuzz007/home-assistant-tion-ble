@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from typing import Any, override
 
 import voluptuous as vol
@@ -17,6 +18,8 @@ from homeassistant.helpers.device_registry import format_mac
 
 from .client import TionBleError, TionLiteClient
 from .const import DOMAIN, SERVICE_UUID
+
+_LOGGER = logging.getLogger(__name__)
 
 
 def _device_title(address: str, advertised_name: str | None = None) -> str:
@@ -62,8 +65,14 @@ class TionBleConfigFlow(ConfigFlow, domain=DOMAIN):
             try:
                 await TionLiteClient(
                     self.hass, self._address, self._title
-                ).async_update(pair=True)
-            except TionBleError:
+                ).async_setup()
+            except TionBleError as err:
+                _LOGGER.error(
+                    "Unable to set up Tion Lite %s: %s",
+                    self._address,
+                    err,
+                    exc_info=True,
+                )
                 errors["base"] = "cannot_connect"
             else:
                 return self.async_create_entry(

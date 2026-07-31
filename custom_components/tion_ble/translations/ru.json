@@ -4,7 +4,7 @@
       "already_configured": "Этот Tion Lite уже добавлен."
     },
     "error": {
-      "cannot_connect": "Не удалось подключиться к бризеру. Убедитесь, что Tion Lite находится в режиме сопряжения, приложение Tion Remote закрыто, а Bluetooth Home Assistant видит устройство.",
+      "cannot_connect": "Не удалось подключиться к бризеру. Убедитесь, что Tion Lite находится в режиме сопряжения, приложение Tion Remote закрыто, а Bluetooth Home Assistant видит устройство. Подробная причина записана в журнал Home Assistant.",
       "invalid_address": "Введите MAC-адрес в формате AA:BB:CC:DD:EE:FF."
     },
     "step": {
