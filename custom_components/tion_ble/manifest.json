@@ -1,0 +1,18 @@
+{
+  "domain": "tion_ble",
+  "name": "Tion BLE",
+  "bluetooth": [
+    {
+      "service_uuid": "98f00001-3788-83ea-453e-f52244709ddb"
+    }
+  ],
+  "codeowners": ["@Kuzz007"],
+  "config_flow": true,
+  "dependencies": ["bluetooth_adapters"],
+  "documentation": "https://github.com/Kuzz007/home-assistant-tion-ble",
+  "integration_type": "device",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/Kuzz007/home-assistant-tion-ble/issues",
+  "requirements": [],
+  "version": "0.1.0"
+}

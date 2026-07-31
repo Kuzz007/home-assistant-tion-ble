@@ -1,0 +1,85 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "This Tion Lite is already configured."
+    },
+    "error": {
+      "cannot_connect": "Unable to connect. Make sure Tion Lite is in pairing mode, the Tion Remote app is closed, and the Home Assistant Bluetooth adapter can see the device.",
+      "invalid_address": "Enter the MAC address as AA:BB:CC:DD:EE:FF."
+    },
+    "step": {
+      "bluetooth_confirm": {
+        "description": "Prepare {name}: put the breezer in standby, then hold the Heating/Pairing button for 5 seconds. Close the Tion Remote app and select Submit.",
+        "title": "Connect Tion Lite"
+      },
+      "user": {
+        "data": {
+          "address": "Tion Lite or its MAC address"
+        },
+        "description": "Select a discovered breezer. If the list does not appear, manually enter the MAC address shown in Tion Remote. Put the breezer in pairing mode before continuing.",
+        "title": "Add Tion Lite"
+      }
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "filter_required": {
+        "name": "Filter replacement required"
+      },
+      "heating": {
+        "name": "Heating active"
+      }
+    },
+    "fan": {
+      "breezer": {
+        "name": "Breezer"
+      }
+    },
+    "number": {
+      "target_temperature": {
+        "name": "Target temperature"
+      }
+    },
+    "sensor": {
+      "airflow_volume": {
+        "name": "Supplied air volume"
+      },
+      "errors": {
+        "name": "Error code"
+      },
+      "fan_time": {
+        "name": "Fan operating time"
+      },
+      "filter_time": {
+        "name": "Filter time remaining"
+      },
+      "heater_output": {
+        "name": "Heater output"
+      },
+      "outdoor_temperature": {
+        "name": "Inlet air temperature"
+      },
+      "pcb_temperature": {
+        "name": "Circuit board temperature"
+      },
+      "supply_temperature": {
+        "name": "Supply air temperature"
+      },
+      "work_time": {
+        "name": "Total operating time"
+      }
+    },
+    "switch": {
+      "heater": {
+        "name": "Heating"
+      },
+      "led": {
+        "name": "Backlight"
+      },
+      "sound": {
+        "name": "Sounds"
+      }
+    }
+  },
+  "title": "Tion BLE"
+}
