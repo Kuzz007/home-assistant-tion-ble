@@ -7,17 +7,44 @@
       "cannot_connect": "Unable to connect. Make sure Tion Lite is in pairing mode, the Tion Remote app is closed, and the Home Assistant Bluetooth adapter can see the device. The detailed reason was written to the Home Assistant log.",
       "invalid_address": "Enter the MAC address as AA:BB:CC:DD:EE:FF."
     },
+    "progress": {
+      "scanning": "Searching for nearby Tion Lite devices. The scan takes about 10 seconds."
+    },
     "step": {
       "bluetooth_confirm": {
         "description": "Prepare {name}: put the breezer in standby, then hold the Heating/Pairing button for 5 seconds. Close the Tion Remote app and select Submit.",
         "title": "Connect Tion Lite"
       },
-      "user": {
+      "manual": {
         "data": {
-          "address": "Tion Lite or its MAC address"
+          "address": "Tion Lite MAC address"
         },
-        "description": "Select a discovered breezer. If the list does not appear, manually enter the MAC address shown in Tion Remote. Put the breezer in pairing mode before continuing.",
-        "title": "Add Tion Lite"
+        "description": "Enter the MAC address shown in Tion Remote as AA:BB:CC:DD:EE:FF.",
+        "title": "Enter MAC address"
+      },
+      "no_devices": {
+        "description": "No Tion Lite devices were found during the 10-second scan. Make sure the breezer is powered, nearby, and not connected to Tion Remote. You can scan again or enter its MAC address manually.",
+        "menu_options": {
+          "manual": "Enter MAC address manually",
+          "scan": "Scan again"
+        },
+        "title": "No breezers found"
+      },
+      "scan_result": {
+        "description": "Found Tion devices: {count}. You can select a breezer, scan again, or enter a MAC address manually.",
+        "menu_options": {
+          "manual": "Enter MAC address manually",
+          "scan": "Scan again",
+          "select": "Select a found breezer"
+        },
+        "title": "Bluetooth scan complete"
+      },
+      "select": {
+        "data": {
+          "address": "Found breezer"
+        },
+        "description": "Select your Tion Lite. The list shows its name, MAC address, and RSSI signal level. An RSSI value closer to zero means a stronger signal.",
+        "title": "Select Tion Lite"
       }
     }
   },
