@@ -58,6 +58,22 @@ class TionLiteClient:
         self.name = name
         self._request_id = 0
 
+    async def async_setup(self) -> TionLiteState:
+        """Read state, falling back to OS-level pairing only when required."""
+        try:
+            return await self.async_update(pair=False)
+        except TionBleDeviceNotFound:
+            raise
+        except TionBleConnectionError as err:
+            _LOGGER.warning(
+                "%s: connection without OS-level pairing failed: %s; "
+                "retrying with pairing",
+                self.address,
+                err,
+            )
+
+        return await self.async_update(pair=True)
+
     async def async_update(self, *, pair: bool = False) -> TionLiteState:
         """Read the current state."""
         response = await self._async_exchange(

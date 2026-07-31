@@ -4,7 +4,7 @@
       "already_configured": "This Tion Lite is already configured."
     },
     "error": {
-      "cannot_connect": "Unable to connect. Make sure Tion Lite is in pairing mode, the Tion Remote app is closed, and the Home Assistant Bluetooth adapter can see the device.",
+      "cannot_connect": "Unable to connect. Make sure Tion Lite is in pairing mode, the Tion Remote app is closed, and the Home Assistant Bluetooth adapter can see the device. The detailed reason was written to the Home Assistant log.",
       "invalid_address": "Enter the MAC address as AA:BB:CC:DD:EE:FF."
     },
     "step": {
