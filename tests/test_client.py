@@ -1,5 +1,6 @@
 """Tests for Tion Lite connection setup."""
 
+import asyncio
 from unittest.mock import AsyncMock, MagicMock, call
 
 import pytest
@@ -65,6 +66,7 @@ async def test_exchange_uses_write_with_response(
     client: TionLiteClient, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """Tion's write characteristic requires an acknowledged GATT write."""
+    client._hass = MagicMock(loop=asyncio.get_running_loop())
     notification_handler = None
     response_frame = build_frame(FRAME_TYPE_STATE_RESPONSE)
     bleak_client = MagicMock(is_connected=True)
