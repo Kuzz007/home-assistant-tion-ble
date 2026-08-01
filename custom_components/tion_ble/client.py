@@ -5,7 +5,6 @@ from __future__ import annotations
 import asyncio
 import logging
 
-from bleak.exc import BleakError
 from bleak_retry_connector import (
     BLEAK_RETRY_EXCEPTIONS,
     BleakClientWithServiceCache,
@@ -145,6 +144,7 @@ class TionLiteClient:
                 response_future.set_exception(err)
 
         client: BleakClientWithServiceCache | None = None
+        operation = "connecting"
         try:
             client = await establish_connection(
                 BleakClientWithServiceCache,
@@ -153,24 +153,36 @@ class TionLiteClient:
                 max_attempts=3,
                 pair=pair,
             )
+            operation = "enabling notifications"
             await client.start_notify(NOTIFY_CHARACTERISTIC_UUID, _notification_handler)
+            operation = "writing request"
             for packet in fragment_frame(request):
                 await client.write_gatt_char(
-                    WRITE_CHARACTERISTIC_UUID, packet, response=False
+                    WRITE_CHARACTERISTIC_UUID, packet, response=True
                 )
+            operation = "waiting for response"
             async with asyncio.timeout(RESPONSE_TIMEOUT):
                 return await response_future
         except TimeoutError as err:
             raise TionBleConnectionError(
-                f"Tion Lite {self.address} did not answer"
+                f"Tion Lite {self.address} did not answer the state request "
+                f"(OS pairing: {'on' if pair else 'off'})"
             ) from err
         except (TionProtocolError, *BLEAK_RETRY_EXCEPTIONS) as err:
-            raise TionBleConnectionError(str(err)) from err
+            detail = str(err) or type(err).__name__
+            raise TionBleConnectionError(f"{operation} failed: {detail}") from err
+        except Exception as err:
+            detail = str(err) or type(err).__name__
+            raise TionBleConnectionError(
+                f"Unexpected error while {operation}: {type(err).__name__}: {detail}"
+            ) from err
         finally:
             if client is not None and client.is_connected:
                 try:
                     await client.disconnect()
-                except BleakError:
-                    _LOGGER.debug(
-                        "%s: error while disconnecting", self.address, exc_info=True
+                except Exception:
+                    _LOGGER.warning(
+                        "%s: error while disconnecting after Bluetooth transaction",
+                        self.address,
+                        exc_info=True,
                     )
