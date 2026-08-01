@@ -87,6 +87,7 @@ async def test_exchange_uses_write_with_response(
         client_module.bluetooth,
         "async_ble_device_from_address",
         lambda *_args, **_kwargs: object(),
+        raising=False,
     )
     monkeypatch.setattr(
         client_module,
