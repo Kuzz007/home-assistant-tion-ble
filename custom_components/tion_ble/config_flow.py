@@ -78,6 +78,13 @@ class TionBleConfigFlow(ConfigFlow, domain=DOMAIN):
                     exc_info=True,
                 )
                 errors["base"] = "cannot_connect"
+            except Exception as err:
+                _LOGGER.exception(
+                    "Unexpected error while setting up Tion Lite %s: %s",
+                    self._address,
+                    err,
+                )
+                errors["base"] = "cannot_connect"
             else:
                 return self.async_create_entry(
                     title=self._title,
