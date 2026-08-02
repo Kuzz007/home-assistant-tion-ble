@@ -15,6 +15,11 @@ from bleak_retry_connector import (
 from homeassistant.components import bluetooth
 from homeassistant.core import HomeAssistant
 
+from .bluez_pairing import (
+    BlueZPairingError,
+    BlueZPairingUnavailable,
+    async_pair_with_bluez,
+)
 from .const import (
     NOTIFY_CHARACTERISTIC_UUID,
     PAIRING_SETTLE_DELAY,
@@ -121,8 +126,24 @@ class TionLiteClient:
         return ble_device
 
     async def _async_pair(self) -> None:
-        """Ask BlueZ to pair before making a regular GATT connection."""
+        """Pair through a local BlueZ agent, falling back for proxy adapters."""
         ble_device = self._ble_device()
+        try:
+            await async_pair_with_bluez(self.address, PAIRING_TIMEOUT)
+            return
+        except BlueZPairingUnavailable as err:
+            _LOGGER.debug(
+                "%s: direct BlueZ pairing is unavailable (%s); using Bleak",
+                self.address,
+                err,
+            )
+        except BlueZPairingError as err:
+            raise TionBleConnectionError(f"BlueZ pairing failed: {err}") from err
+
+        await self._async_pair_with_bleak(ble_device)
+
+    async def _async_pair_with_bleak(self, ble_device: BLEDevice) -> None:
+        """Pair through Bleak when the device is provided by a remote scanner."""
         client: BleakClientWithServiceCache | None = None
         operation = "pairing"
         try:
