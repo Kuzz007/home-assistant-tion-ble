@@ -8,12 +8,21 @@
       "invalid_address": "Enter the MAC address as AA:BB:CC:DD:EE:FF."
     },
     "progress": {
+      "connecting": "Connecting to Tion Lite and reading its state. Bluetooth may need several attempts; do not close this window.",
       "scanning": "Searching for nearby Tion Lite devices. The scan takes about 10 seconds."
     },
     "step": {
       "bluetooth_confirm": {
         "description": "Prepare {name}: put the breezer in standby, then hold the Heating/Pairing button for 5 seconds. Close the Tion Remote app and select Submit.",
         "title": "Connect Tion Lite"
+      },
+      "connection_error": {
+        "description": "Home Assistant reached the breezer, but the connection could not be completed. Technical reason: `{error}`",
+        "menu_options": {
+          "connect": "Try connecting again",
+          "scan": "Return to Bluetooth scan"
+        },
+        "title": "Tion Lite connection failed"
       },
       "manual": {
         "data": {
