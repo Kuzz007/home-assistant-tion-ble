@@ -21,4 +21,11 @@ DEFAULT_MAX_FAN_SPEED: Final = 6
 MIN_TARGET_TEMPERATURE: Final = 1
 MAX_TARGET_TEMPERATURE: Final = 25
 
-PLATFORMS: Final = ["binary_sensor", "fan", "number", "sensor", "switch"]
+PLATFORMS: Final = [
+    "binary_sensor",
+    "fan",
+    "number",
+    "select",
+    "sensor",
+    "switch",
+]
