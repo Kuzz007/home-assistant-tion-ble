@@ -8,7 +8,7 @@
       "invalid_address": "Enter the MAC address as AA:BB:CC:DD:EE:FF."
     },
     "progress": {
-      "connecting": "Connecting to Tion Lite and reading its state. Bluetooth may need several attempts; do not close this window.",
+      "connecting": "Home Assistant first creates the system Bluetooth bond, then reconnects and reads the Tion Lite state. After the beep, wait a few seconds and keep this window open.",
       "scanning": "Searching for nearby Tion Lite devices. The scan takes about 10 seconds."
     },
     "step": {
@@ -17,7 +17,7 @@
         "title": "Connect Tion Lite"
       },
       "connection_error": {
-        "description": "Home Assistant reached the breezer, but the connection could not be completed. Technical reason: `{error}`",
+          "description": "Home Assistant reached the breezer but could not finish pairing or data exchange. Put the breezer into pairing mode again before retrying. Technical reason: `{error}`",
         "menu_options": {
           "connect": "Try connecting again",
           "scan": "Return to Bluetooth scan"
