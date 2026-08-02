@@ -121,10 +121,10 @@ class TionLiteClient:
         return ble_device
 
     async def _async_pair(self) -> None:
-        """Create the OS bond in its own connection, as required by Tion Lite."""
+        """Ask BlueZ to pair before making a regular GATT connection."""
         ble_device = self._ble_device()
         client: BleakClientWithServiceCache | None = None
-        operation = "connecting for pairing"
+        operation = "pairing"
         try:
             async with asyncio.timeout(PAIRING_TIMEOUT):
                 client = await establish_connection(
@@ -132,10 +132,8 @@ class TionLiteClient:
                     ble_device,
                     self.name,
                     max_attempts=3,
-                    pair=False,
+                    pair=True,
                 )
-                operation = "pairing"
-                await client.pair()
         except TimeoutError as err:
             raise TionBleConnectionError(
                 f"Tion Lite {self.address} did not finish OS pairing within "
