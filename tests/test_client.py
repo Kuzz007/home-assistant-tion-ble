@@ -62,10 +62,10 @@ async def test_setup_stops_when_pairing_fails(
     update.assert_not_awaited()
 
 
-async def test_pair_uses_own_connection_and_disconnects(
+async def test_pair_happens_before_regular_connect_and_disconnects(
     client: TionLiteClient, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """Pair without notifications and close the pairing connection."""
+    """Let Bleak call BlueZ Pair before Connect and close that connection."""
     ble_device = object()
     bleak_client = MagicMock(is_connected=True)
     bleak_client.pair = AsyncMock()
@@ -76,9 +76,9 @@ async def test_pair_uses_own_connection_and_disconnects(
 
     await client._async_pair()
 
-    assert establish.await_args.kwargs["pair"] is False
+    assert establish.await_args.kwargs["pair"] is True
     assert establish.await_args.kwargs["max_attempts"] == 3
-    bleak_client.pair.assert_awaited_once_with()
+    bleak_client.pair.assert_not_awaited()
     bleak_client.disconnect.assert_awaited_once_with()
 
 
