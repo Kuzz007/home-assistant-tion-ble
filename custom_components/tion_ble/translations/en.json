@@ -76,6 +76,11 @@
         "name": "Target temperature"
       }
     },
+    "select": {
+      "fan_speed": {
+        "name": "Ventilation speed"
+      }
+    },
     "sensor": {
       "airflow_volume": {
         "name": "Supplied air volume"
