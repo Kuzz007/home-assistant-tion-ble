@@ -40,6 +40,9 @@ class TionBleConfigFlow(ConfigFlow, domain=DOMAIN):
     def __init__(self) -> None:
         """Initialize the flow."""
         self._address: str | None = None
+        self._connect_error: str | None = None
+        self._connect_succeeded = False
+        self._connect_task: asyncio.Task[None] | None = None
         self._title: str | None = None
         self._discovered: dict[str, BluetoothServiceInfoBleak] = {}
         self._scan_task: asyncio.Task[None] | None = None
@@ -60,42 +63,97 @@ class TionBleConfigFlow(ConfigFlow, domain=DOMAIN):
     async def async_step_bluetooth_confirm(
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
-        """Confirm a discovered device and establish pairing."""
+        """Confirm a discovered device before starting the connection task."""
         assert self._address is not None
         assert self._title is not None
-        errors: dict[str, str] = {}
 
         if user_input is not None:
-            try:
-                await TionLiteClient(
-                    self.hass, self._address, self._title
-                ).async_setup()
-            except TionBleError as err:
-                _LOGGER.error(
-                    "Unable to set up Tion Lite %s: %s",
-                    self._address,
-                    err,
-                    exc_info=True,
-                )
-                errors["base"] = "cannot_connect"
-            except Exception as err:
-                _LOGGER.exception(
-                    "Unexpected error while setting up Tion Lite %s: %s",
-                    self._address,
-                    err,
-                )
-                errors["base"] = "cannot_connect"
-            else:
-                return self.async_create_entry(
-                    title=self._title,
-                    data={CONF_ADDRESS: self._address},
-                )
+            return await self.async_step_connect()
 
         self._set_confirm_only()
         return self.async_show_form(
             step_id="bluetooth_confirm",
-            errors=errors,
             description_placeholders={"name": self._title},
+        )
+
+    async def async_step_connect(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Connect in the background so the config-flow request cannot time out."""
+        assert self._address is not None
+        assert self._title is not None
+
+        if self._connect_task is None:
+            self._connect_error = None
+            self._connect_succeeded = False
+            self._connect_task = self.hass.async_create_task(
+                self._async_connect(),
+                f"Connect Tion Lite {self._address}",
+                eager_start=False,
+            )
+
+        if not self._connect_task.done():
+            return self.async_show_progress(
+                step_id="connect",
+                progress_action="connecting",
+                progress_task=self._connect_task,
+            )
+
+        self._connect_task.result()
+        self._connect_task = None
+        return self.async_show_progress_done(next_step_id="connect_result")
+
+    async def _async_connect(self) -> None:
+        """Validate the initial connection and retain a user-visible result."""
+        assert self._address is not None
+        assert self._title is not None
+        try:
+            await TionLiteClient(self.hass, self._address, self._title).async_setup()
+        except TionBleError as err:
+            self._connect_error = str(err) or type(err).__name__
+            _LOGGER.error(
+                "Unable to set up Tion Lite %s: %s",
+                self._address,
+                err,
+                exc_info=True,
+            )
+        except Exception as err:
+            self._connect_error = f"{type(err).__name__}: {err}"
+            _LOGGER.exception(
+                "Unexpected error while setting up Tion Lite %s: %s",
+                self._address,
+                err,
+            )
+        else:
+            self._connect_succeeded = True
+
+    async def async_step_connect_result(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Create the entry or show the exact connection error."""
+        assert self._address is not None
+        assert self._title is not None
+
+        if not self._connect_succeeded:
+            if self._connect_error is None:
+                self._connect_error = "Connection task finished without a result"
+            return await self.async_step_connection_error()
+
+        return self.async_create_entry(
+            title=self._title,
+            data={CONF_ADDRESS: self._address},
+        )
+
+    async def async_step_connection_error(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Show an actionable error without relying on Home Assistant logs."""
+        return self.async_show_menu(
+            step_id="connection_error",
+            menu_options=["connect", "scan"],
+            description_placeholders={
+                "error": self._connect_error or "Unknown Bluetooth error"
+            },
         )
 
     @override
